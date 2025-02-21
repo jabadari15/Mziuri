@@ -1,0 +1,65 @@
+
+class Country implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String name;
+    private int population;
+    private double area;
+
+    public Country(String name, int population, double area) {
+        this.name = name;
+        this.population = population;
+        this.area = area;
+    }
+
+    @Override
+    public String toString() {
+        return "Country{name='" + name + "', population=" + population + ", area=" + area + "}";
+    }
+}
+
+public class CountrySerialization {
+    private static final String FILE_NAME = "countries.txt";
+
+    public static void main(String[] args) {
+        List<Country> countries = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+
+        for (int i = 0; i < 5; i++) {
+            System.out.println("Enter country " + (i + 1) + " name:");
+            String name = scanner.nextLine();
+
+            System.out.println("Enter population of " + name + ":");
+            int population = Integer.parseInt(scanner.nextLine());
+
+            System.out.println("Enter area of " + name + " (in sq km):");
+            double area = Double.parseDouble(scanner.nextLine());
+
+            countries.add(new Country(name, population, area));
+        }
+        scanner.close();
+
+        serializeCountries(countries);
+        deserializeCountries();
+    }
+
+    private static void serializeCountries(List<Country> countries) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+            oos.writeObject(countries);
+            System.out.println("Countries serialized successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void deserializeCountries() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+            List<Country> countries = (List<Country>) ois.readObject();
+            System.out.println("Deserialized Countries:");
+            for (Country country : countries) {
+                System.out.println(country);
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
