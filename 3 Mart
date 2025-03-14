@@ -1,0 +1,209 @@
+"""
+1.b
+2.a
+3. c-ს გარდა ყველა სწორია
+4. b
+5. a და ც
+6. b
+7. c
+8. b
+9. b
+10. c
+11. c
+12. b
+13. d-ს გარდა ყველა სწორია
+14. b და d
+15. a და c
+"""
+16
+"""
+import java.io.;
+import java.util.;
+
+class Student implements Serializable {
+    private int id;
+    private String firstName;
+    private String lastName;
+    private int year;
+    private double grade;
+    private List<String> subjects;
+
+    public Student(int id, String firstName, String lastName, int year, double grade, List<String> subjects) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.year = year;
+        this.grade = grade;
+        this.subjects = subjects;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{id=" + id + ", firstName='" + firstName + "', lastName='" + lastName + "', year=" + year +
+                ", grade=" + grade + ", subjects=" + subjects + "}";
+    }
+}
+
+public class StudentSerializationDemo {
+
+    public static void main(String[] args) {
+        List<Student> students = new ArrayList<>();
+
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("students.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                int id = Integer.parseInt(data[0].trim());
+                String firstName = data[1].trim();
+                String lastName = data[2].trim();
+                int year = Integer.parseInt(data[3].trim());
+                double grade = Double.parseDouble(data[4].trim());
+                List<String> subjects = new ArrayList<>(Arrays.asList(data[5].trim().split(" ")));
+
+                students.add(new Student(id, firstName, lastName, year, grade, subjects));
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading the file: " + e.getMessage());
+        }
+
+
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("students.ser"))) {
+            out.writeObject(students);
+        } catch (IOException e) {
+            System.err.println("Error serializing data: " + e.getMessage());
+        }
+
+
+        List<Student> deserializedStudents = null;
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("students.ser"))) {
+            deserializedStudents = (List<Student>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error deserializing data: " + e.getMessage());
+        }
+
+
+        if (deserializedStudents != null) {
+            for (Student student : deserializedStudents) {
+                System.out.println(student);
+            }
+        }
+    }
+}
+
+"""
+17
+"""
+import java.io.;
+import java.util.;
+
+class Student implements Serializable, Comparable<Student> {
+    private int id;
+    private String firstName;
+    private String lastName;
+    private int year;
+    private double grade;
+    private List<String> subjects;
+
+    public Student(int id, String firstName, String lastName, int year, double grade, List<String> subjects) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.year = year;
+        this.grade = grade;
+        this.subjects = subjects;
+    }
+
+    @Override
+    public int hashCode() {
+        
+        return Objects.hash(id, year, grade);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Student student = (Student) obj;
+
+        return id == student.id && subjects.equals(student.subjects);
+    }
+
+    @Override
+    public String toString() {
+        return "Student: {\n" +
+                "  id: " + id + ",\n" +
+                "  firstName: '" + firstName + "',\n" +
+                "  lastName: '" + lastName + "',\n" +
+                "  year: " + year + ",\n" +
+                "  avgGrade: " + grade + ",\n" +
+                "  subjects: " + subjects + "\n" +
+                "}";
+    }
+
+    @Override
+    public int compareTo(Student other) {
+
+        return Double.compare(other.grade, this.grade);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public List<String> getSubjects() {
+        return subjects;
+    }
+}
+
+public class StudentSerializationDemo {
+
+    public static void main(String[] args) {
+        List<Student> students = new ArrayList<>();
+
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("students.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                int id = Integer.parseInt(data[0].trim());
+                String firstName = data[1].trim();
+                String lastName = data[2].trim();
+                int year = Integer.parseInt(data[3].trim());
+                double grade = Double.parseDouble(data[4].trim());
+                List<String> subjects = new ArrayList<>(Arrays.asList(data[5].trim().split(" ")));
+
+                students.add(new Student(id, firstName, lastName, year, grade, subjects));
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading the file: " + e.getMessage());
+        }
+
+
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("students.ser"))) {
+            out.writeObject(students);
+        } catch (IOException e) {
+            System.err.println("Error serializing data: " + e.getMessage());
+        }
+
+
+        List<Student> deserializedStudents = null;
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("students.ser"))) {
+            deserializedStudents = (List<Student>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error deserializing data: " + e.getMessage());
+        }
+
+
+        if (deserializedStudents != null) {
+            Collections.sort(deserializedStudents);
+
+
+            for (Student student : deserializedStudents) {
+                System.out.println(student);
+            }
+        }
+    }
+}
+
+"""
